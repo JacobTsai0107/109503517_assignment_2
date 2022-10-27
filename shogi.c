@@ -569,6 +569,7 @@ int input(){
 static void stdin_cb (EV_P_ ev_io *w, int revents){
     int total = (int)ev_now(loop)-now;
     if(input()){
+        total = (int)ev_now(loop)-now;
         chessboard();
         if(counter%2 == 1){
             clk1 = total - clk2;
@@ -580,6 +581,7 @@ static void stdin_cb (EV_P_ ev_io *w, int revents){
         }
     }
     else{
+        total = (int)ev_now(loop)-now;
         chessboard();
         if(counter%2 == 0){
             clk1 = total - clk2;
