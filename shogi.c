@@ -14,10 +14,10 @@ FILE* fp;
 
 typedef int BOOL;
 BOOL check = true;//check keyboard input
-BOOL systemstart = true;
-BOOL gamestart = false;
-BOOL gamereset = true;
-BOOL timereset = false;
+BOOL systemstart = true;//whole system switch
+BOOL gamestart = false;// time counting loop start
+BOOL gamereset = true;//use go back to first step
+BOOL timereset = false;//time loop reset
 
  ev_io stdin_watcher;
  ev_timer time_watcher;
@@ -49,7 +49,7 @@ void chessboard(){
 	{
 
 		for(int j = 0;j < COLUMN ; j++){
-            switch(board[i][j]) {
+            switch(board[i][j]) {//categorize
                 case' ': printf("    ");break;
                 case'k': printf("\033[31m 王 \033[0m");break;
                 case'g': printf("\033[31m 金 \033[0m");break;
@@ -88,7 +88,7 @@ struct data
 	int to_s[2];
 	char f_chess;
 	char t_chess;
-}movement[MAXSTACK];
+}movement[MAXSTACK];//step restoration
 
 int top=-1;//counter for maxstack
 
@@ -105,7 +105,7 @@ int isEmpty()
 	}
 }
 
-int push(int from1, int from2, int to1,int to2)
+int push(int from1, int from2, int to1,int to2)//stack
 {
 	if(top>=MAXSTACK)
 	{
@@ -125,7 +125,7 @@ int push(int from1, int from2, int to1,int to2)
 	}
 }
 
-int goback()
+int goback()//pop
 {
 	if(isEmpty())
 	{
@@ -140,7 +140,7 @@ int goback()
 	}
 }
 
-void record_Board(void)	
+void record_Board(void)	//for replay
 {
 	for(int i = 0;i<ROW;i++)
 	{
@@ -152,7 +152,7 @@ void record_Board(void)
 }
 
 
-void replay(void){
+void replay(void){//review step
     int step = 0;
     char option[10];
     check = true;
@@ -174,7 +174,7 @@ void replay(void){
 			printf("invalid input, please try again\n");
 		}
     else{
-        if(option[0] == 'b' || option[0] == 'B'){
+        if(option[0] == 'b' || option[0] == 'B'){//go back function
             if(step==0){
                 printf("failed to backward\n");
             }
@@ -186,7 +186,7 @@ void replay(void){
                 chessboard();
             }
         }
-        else if(option[0] == 'f' || option[0] == 'F'){
+        else if(option[0] == 'f' || option[0] == 'F'){//gamecheck function to update chessboard
             if(step == top){
                 printf("failed to forward\n");
             }
@@ -205,7 +205,7 @@ void replay(void){
     }
     }
 }
-int writefile(){
+int writefile(){//binary file write in
     char filename[50];
     printf("name for saving file(binary file as '.dat'):");
     scanf("%s",filename);
@@ -218,7 +218,7 @@ int writefile(){
         return 1;
     }
 }
-int readfile(){
+int readfile(){//read file
     char filename[50];
     printf("name for saving file(binary file as '.dat'):");
     scanf("%s",filename);
@@ -231,7 +231,7 @@ int readfile(){
         return 1;
     }
 }
-int Choose_Option(){
+int Choose_Option(){//main page in system
     check = true;
     gamereset = true;
     char mode[20];
@@ -243,7 +243,7 @@ int Choose_Option(){
 			printf("invalid input, please try again\n");
 		}
         else{
-            if(mode[0] == 'n' || mode[0] == 'N'){
+            if(mode[0] == 'n' || mode[0] == 'N'){//reset chessboard and start time loop
             printf("Game starts!\n");
             while(gamereset){
                 goback();
@@ -252,14 +252,14 @@ int Choose_Option(){
             check = false;
             gamestart = true;
             }
-            else if(mode[0] == 'r' || mode[0] == 'R'){
+            else if(mode[0] == 'r' || mode[0] == 'R'){//review game or call binary file
                 printf("enter 'o' to open saved files(it will recover the previous game, suggesting saving the game first.) or 'p' to review previous game:");
                 scanf(" %s", mode);
                 if(strlen(mode)!=1){
 			printf("invalid input, please try again\n");
 		    }
             else{
-                if(mode[0] == 'o' || mode[0] == 'O'){
+                if(mode[0] == 'o' || mode[0] == 'O'){//call binary file
                     if(!readfile()){
                         printf("no file or wrong filename! cannot open the file!\n");
                     }
@@ -267,7 +267,7 @@ int Choose_Option(){
                         replay();
                     }
                 }
-                else if(mode[0] == 'p' || mode[0] == 'P'){
+                else if(mode[0] == 'p' || mode[0] == 'P'){//run savings in struct
                         if(top!=-1){
                           replay();  
                     }
@@ -277,11 +277,11 @@ int Choose_Option(){
                 }
             }
             }
-            else if(mode[0] == 'q' || mode[0] == 'Q'){
+            else if(mode[0] == 'q' || mode[0] == 'Q'){//system quit
             systemstart = false;
             check = false;
             }
-            else if(mode[0] == 's' || mode[0] == 'S'){
+            else if(mode[0] == 's' || mode[0] == 'S'){//save movement to binary file
                 if(top == -1){
                     printf("no data can be restored!\n");
                 }
@@ -301,7 +301,7 @@ int Choose_Option(){
     }
 }
 
-int game_check(int start_row, int start_column, int end_row, int end_column){
+int game_check(int start_row, int start_column, int end_row, int end_column){//shogi rule to check the step is right
     int unit1 = 0, unit2 = 0;
 	check = false;
     //make sure the inputs are between 1 to 9
@@ -541,7 +541,7 @@ else if(board[end_row][end_column] == 'k' || board[end_row][end_column] == 'K') 
 		return 0;
 	}
 }
-int input(){
+int input(){//feed input
     int start_row, start_column, end_row, end_column;
     scanf("%d",&start_row);
     if (start_row == 0){
@@ -566,7 +566,7 @@ int input(){
     scanf("%d",&end_column);
     game_check(start_row, start_column, end_row, end_column);
 }
-static void stdin_cb (EV_P_ ev_io *w, int revents){
+static void stdin_cb (EV_P_ ev_io *w, int revents){//loop i/o switch
     int total = (int)ev_now(loop)-now;
     if(input()){
         total = (int)ev_now(loop)-now;
@@ -600,7 +600,7 @@ static void stdin_cb (EV_P_ ev_io *w, int revents){
     }
     //else
 }
-static void timeout_cb (EV_P_ ev_timer *w, int revents){
+static void timeout_cb (EV_P_ ev_timer *w, int revents){//time loop
     while(timereset){
         now = ev_now(loop);
         timereset = false;
@@ -627,7 +627,7 @@ static void timeout_cb (EV_P_ ev_timer *w, int revents){
     }
 }
 
-int main(){
+int main(){//system loop
     record_Board();
     while(systemstart){
        Choose_Option();
