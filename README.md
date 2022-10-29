@@ -1,4 +1,4 @@
-# __Assignment 2 : Shogi Game In C Langugae__
+# __Assignment 2 : Shogi Game In C Language__
 ## Introduction
 It's a simple shogi game without resurrection and transform.(just basic rules)In this game, the blue first, and the person who defeats the king of the enemy wins the game. In this program, you can know the time one spend and the total time of this game. Additionally, after the game, you can save it into a binary file to review the game whenever you want.
 ## Compile & Run & Stop
